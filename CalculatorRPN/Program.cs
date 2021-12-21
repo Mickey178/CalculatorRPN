@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CalculatorRPN
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
@@ -131,7 +131,7 @@ namespace CalculatorRPN
                         case "+":
                             firstValue = double.Parse(presentationStringRPN[i - 2]);
                             secondValue = double.Parse(presentationStringRPN[i - 1]);
-                            presentationStringRPN[i] = Add(firstValue, secondValue).ToString();
+                            presentationStringRPN[i] = Sum(firstValue, secondValue).ToString();
                             presentationStringRPN.RemoveAt(i - 2);
                             presentationStringRPN.RemoveAt(i - 2);
                             break;
@@ -196,7 +196,7 @@ namespace CalculatorRPN
             }
         }
 
-        public static double Add(double a, double b)
+        public static double Sum(double a, double b)
         {
             return a + b;
         }
