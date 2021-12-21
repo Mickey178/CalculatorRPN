@@ -219,8 +219,7 @@ namespace CalculatorRPN
             }
             else
             {
-                Console.WriteLine("Нельзя делить на 0");
-                return a;
+                throw new ArgumentNullException("cannot be divided by zero");
             }
         }
     }

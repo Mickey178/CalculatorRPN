@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace CalculatorRPN.Tests
 {
@@ -12,10 +13,10 @@ namespace CalculatorRPN.Tests
             string value2 = "/";
             int excepted = 1;
             int actual = Program.Priority(value1);
-            Assert.AreEqual(excepted, actual);
-            int excepeted2 = 1;
+            Assert.AreEqual(excepted, actual, "if we have a {0} at the input, then we should get {1}", value1, excepted);
+            int excepted2 = 1;
             int actual2 = Program.Priority(value2);
-            Assert.AreEqual(excepeted2, actual2);
+            Assert.AreEqual(excepted2, actual2, "if we have a {0} at the input, then we should get {1}", value2, excepted2);
         }
 
         public void PriorityTest_signSumOrSubtract_2returned()
@@ -24,10 +25,10 @@ namespace CalculatorRPN.Tests
             string value2 = "-";
             int excepted = 2;
             int actual = Program.Priority(value1);
-            Assert.AreEqual(excepted, actual);
-            int excepeted2 = 2;
+            Assert.AreEqual(excepted, actual, "if we have a {0} at the input, then we should get {1}", value1, excepted);
+            int excepted2 = 2;
             int actual2 = Program.Priority(value2);
-            Assert.AreEqual(excepeted2, actual2);
+            Assert.AreEqual(excepted2, actual2, "if we have a {0} at the input, then we should get {1}", value2, excepted2);
         }
 
         public void PriorityTest_openParenthesis_3returned()
@@ -35,7 +36,7 @@ namespace CalculatorRPN.Tests
             string value = "(";
             int excepted = 3;
             int actual = Program.Priority(value);
-            Assert.AreEqual(excepted, actual);
+            Assert.AreEqual(excepted, actual, "if we have a {0} at the input, then we should get {1}", value, excepted);
         }
 
         public void PriorityTest_closeParenthesis_4returned()
@@ -43,7 +44,7 @@ namespace CalculatorRPN.Tests
             string value = ")";
             int excepted = 4;
             int actual = Program.Priority(value);
-            Assert.AreEqual(excepted, actual);
+            Assert.AreEqual(excepted, actual, "if we have a {0} at the input, then we should get {1}", value, excepted);
         }
 
         [TestMethod()]
@@ -52,7 +53,7 @@ namespace CalculatorRPN.Tests
             string value = ",";
             bool excepted = true;
             bool actual = Program.IsNumeric(value);
-            Assert.AreEqual(excepted,actual);
+            Assert.AreEqual(excepted, actual, "if we have a {0} at the input, then we should get {1}", value, excepted);
         }
 
         [TestMethod()]
@@ -61,7 +62,7 @@ namespace CalculatorRPN.Tests
             string value = "5";
             bool excepted = true;
             bool actual = Program.IsNumeric(value);
-            Assert.AreEqual(excepted, actual);
+            Assert.AreEqual(excepted, actual, "if we have a {0} at the input, then we should get {1}", value, excepted);
         }
 
         [TestMethod()]
@@ -70,7 +71,7 @@ namespace CalculatorRPN.Tests
             string value = "*";
             bool excepted = false;
             bool actual = Program.IsNumeric(value);
-            Assert.AreEqual(excepted, actual);
+            Assert.AreEqual(excepted, actual, "if we have a {0} at the input, then we should get {1}", value, excepted);
         }
 
         [TestMethod()]
@@ -80,7 +81,7 @@ namespace CalculatorRPN.Tests
             double y = 10;
             double excepted = 10.5;
             double actual = Program.Sum(x,y);
-            Assert.AreEqual(excepted,actual);
+            Assert.AreEqual(excepted,actual, "Sum of number {0}, {1} should have been {2}" ,x ,y, excepted);
         }
 
         [TestMethod()]
@@ -90,7 +91,7 @@ namespace CalculatorRPN.Tests
             double y = 10;
             double excepted = 10;
             double actual = Program.Subtract(x, y);
-            Assert.AreEqual(excepted, actual);
+            Assert.AreEqual(excepted, actual, "Subtract of number {0}, {1} should have been {2}", x, y, excepted);
         }
 
         [TestMethod()]
@@ -100,7 +101,7 @@ namespace CalculatorRPN.Tests
             double y = 5;
             double excepted = 25;
             double actual = Program.Multiply(x, y);
-            Assert.AreEqual(excepted, actual);
+            Assert.AreEqual(excepted, actual, "Mupliply of number {0}, {1} should have been {2}", x, y, excepted);
         }
 
         [TestMethod()]
@@ -110,17 +111,16 @@ namespace CalculatorRPN.Tests
             double y = 5;
             double excepted = 2;
             double actual = Program.Divide(x, y);
-            Assert.AreEqual(excepted, actual);
+            Assert.AreEqual(excepted, actual, "Divide of number {0}, {1} should have been {2}", x, y, excepted);
         }
 
+        [ExpectedException(typeof(ArgumentNullException), "exception was not throw")]
         [TestMethod()]
-        public void DivideTest_10and0_10returned()
+        public void DivideTest_10and0_ExceptionReturned()
         {
             double x = 10;
             double y = 0;
-            double excepted = 10;
-            double actual = Program.Divide(x, y);
-            Assert.AreEqual(excepted, actual);
+            Program.Divide(x, y);
         }
     }
 }
