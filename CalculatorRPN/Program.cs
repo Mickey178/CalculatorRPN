@@ -1,171 +1,201 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
 
 namespace CalculatorRPN
 {
     public class Program
     {
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         static void Main(string[] args)
         {
             string presentationString = Console.ReadLine();
-            List<string> regularViewList = new List<string>();
 
-            for (int i = 0; i < presentationString.Length; i++)
-            {
-                regularViewList.Add(presentationString.Substring(i, 1));
-            }
+            Console.WriteLine("\nОтвет: " + Calculate(presentationString));
+            Console.ReadLine();
+        }
 
-            for (int i = 0; i < regularViewList.Count - 1; i++)
-            {
-                if (IsNumeric(regularViewList[i]) && IsNumeric(regularViewList[i + 1]))
-                {
-                    regularViewList[i + 1] = regularViewList[i] + regularViewList[i + 1];
-                    regularViewList.RemoveAt(i);
-                    i--;
-                }
-            }
+        public static string Calculate(string input)
+        {
+            List<string> representationRPN = new List<string>(Converting(input));
 
-            List<string> charListOnStack = new List<string>();
-            List<string> presentationStringRPN = new List<string>();
-
-            for (int i = 0; i < regularViewList.Count; i++)
-            {
-                if (IsNumeric(regularViewList[i]))
-                {
-                    presentationStringRPN.Add(regularViewList[i]);
-                }
-                else
-                {
-                    if (charListOnStack.Count == 0)
-                    {
-                        charListOnStack.Add(regularViewList[i]);
-                    }
-                    else
-                    {
-                        if (Priority(regularViewList[i]) == 2)
-                        {
-                            if (Priority(charListOnStack[charListOnStack.Count - 1]) == 2)
-                            {
-                                presentationStringRPN.Add(charListOnStack[charListOnStack.Count - 1]);
-                                charListOnStack.RemoveAt(charListOnStack.Count - 1);
-                                charListOnStack.Add(regularViewList[i]);
-                            }
-
-                            if (Priority(charListOnStack[charListOnStack.Count - 1]) == 1)
-                            {
-                                int parentheses = charListOnStack.LastIndexOf("(");
-                                for (int k = 0; k < charListOnStack.Count - 1 - parentheses;)
-                                {
-                                    presentationStringRPN.Add(charListOnStack[charListOnStack.Count - 1]);
-                                    charListOnStack.RemoveAt(charListOnStack.Count - 1);
-                                }
-                                charListOnStack.Add(regularViewList[i]);
-                            }
-
-                            if (Priority(charListOnStack[charListOnStack.Count - 1]) == 3)
-                            {
-                                charListOnStack.Add(regularViewList[i]);
-                            }
-                        }
-
-                        if (Priority(regularViewList[i]) == 1)
-                        {
-                            if (Priority(charListOnStack[charListOnStack.Count - 1]) == 1)
-                            {
-                                presentationStringRPN.Add(charListOnStack[charListOnStack.Count - 1]);
-                                charListOnStack.RemoveAt(charListOnStack.Count - 1);
-                                charListOnStack.Add(regularViewList[i]);
-                            }
-                            if (Priority(charListOnStack[charListOnStack.Count - 1]) == 2 || Priority(charListOnStack[charListOnStack.Count - 1]) == 3)
-                            {
-                                charListOnStack.Add(regularViewList[i]);
-                            }
-                        }
-
-                    }
-
-                    if (Priority(regularViewList[i]) == 3)
-                    {
-                        if (Priority(charListOnStack[charListOnStack.Count - 1]) != 3)
-                        {
-                            charListOnStack.Add(regularViewList[i]);
-                        }
-                    }
-
-                    if (Priority(regularViewList[i]) == 4)
-                    {
-                        int parentheses = charListOnStack.LastIndexOf("(");
-                        for (int e = 0; e < charListOnStack.Count - 1 - parentheses;)
-                        {
-                            presentationStringRPN.Add(charListOnStack[charListOnStack.Count - 1]);
-                            charListOnStack.RemoveAt(charListOnStack.Count - 1);
-                        }
-                        charListOnStack.RemoveAt(charListOnStack.Count - 1);
-                    }
-
-                }
-
-                if (i == regularViewList.Count - 1)
-                {
-                    for (int j = 0; j < charListOnStack.Count;)
-                    {
-                        presentationStringRPN.Add(charListOnStack[charListOnStack.Count - 1]);
-                        charListOnStack.RemoveAt(charListOnStack.Count - 1);
-                    }
-                }
-            }
-
-            foreach (var item in presentationStringRPN)
+            foreach (var item in representationRPN)
             {
                 Console.Write(item);
             }
 
-            double firstValue, secondValue;
+            return MathematicalOperation(representationRPN);
+        }
 
-            for (int i = 0; i < presentationStringRPN.Count; i++)
+        public static string MathematicalOperation(List<string> representationRPN)
+        {
+            for (int i = 0; i < representationRPN.Count; i++)
             {
-                if (IsNumeric(presentationStringRPN[i]) == false)
+                if (IsNumeric(representationRPN[i]) == false)
                 {
-                    switch (presentationStringRPN[i])
+                    switch (representationRPN[i])
                     {
                         case "+":
-                            firstValue = double.Parse(presentationStringRPN[i - 2]);
-                            secondValue = double.Parse(presentationStringRPN[i - 1]);
-                            presentationStringRPN[i] = Sum(firstValue, secondValue).ToString();
-                            presentationStringRPN.RemoveAt(i - 2);
-                            presentationStringRPN.RemoveAt(i - 2);
+                            representationRPN[i] = MathematicAction(representationRPN[i - 2], representationRPN[i - 1], representationRPN[i]);
+                            representationRPN.RemoveAt(i - 2);
+                            representationRPN.RemoveAt(i - 2);
                             break;
                         case "-":
-                            firstValue = double.Parse(presentationStringRPN[i - 2]);
-                            secondValue = double.Parse(presentationStringRPN[i - 1]);
-                            presentationStringRPN[i] = Subtract(firstValue, secondValue).ToString();
-                            presentationStringRPN.RemoveAt(i - 2);
-                            presentationStringRPN.RemoveAt(i - 2);
+                            representationRPN[i] = MathematicAction(representationRPN[i - 2], representationRPN[i - 1], representationRPN[i]);
+                            representationRPN.RemoveAt(i - 2);
+                            representationRPN.RemoveAt(i - 2);
                             break;
                         case "*":
-                            firstValue = double.Parse(presentationStringRPN[i - 2]);
-                            secondValue = double.Parse(presentationStringRPN[i - 1]);
-                            presentationStringRPN[i] = Multiply(firstValue, secondValue).ToString();
-                            presentationStringRPN.RemoveAt(i - 2);
-                            presentationStringRPN.RemoveAt(i - 2);
+                            representationRPN[i] = MathematicAction(representationRPN[i - 2], representationRPN[i - 1], representationRPN[i]);
+                            representationRPN.RemoveAt(i - 2);
+                            representationRPN.RemoveAt(i - 2);
                             break;
                         case "/":
-                            firstValue = double.Parse(presentationStringRPN[i - 2]);
-                            secondValue = double.Parse(presentationStringRPN[i - 1]);
-                            presentationStringRPN[i] = Divide(firstValue, secondValue).ToString();
-                            presentationStringRPN.RemoveAt(i - 2);
-                            presentationStringRPN.RemoveAt(i - 2);
+                            representationRPN[i] = MathematicAction(representationRPN[i - 2], representationRPN[i - 1], representationRPN[i]);
+                            representationRPN.RemoveAt(i - 2);
+                            representationRPN.RemoveAt(i - 2);
                             break;
                         default:
                             Console.WriteLine("Что-то пошло не так");
-                            break;
+                            logger.Error("Введен некорректный символ математической операции");
+                            continue;
                     }
-                    i--;
-                    i--;
+                    i -= 2;
+                }
+
+            }
+            return representationRPN[0];
+        }
+
+        public static List<string> Converting(string mathematicalOrdinaryRepresentation)
+        {
+            List<string> calculateViewList = new List<string>();
+
+            for (int i = 0; i < mathematicalOrdinaryRepresentation.Length; i++)
+            {
+                calculateViewList.Add(mathematicalOrdinaryRepresentation.Substring(i, 1));
+            }
+
+            for (int i = 0; i < calculateViewList.Count - 1;)
+            {
+                if (IsNumeric(calculateViewList[i]) && IsNumeric(calculateViewList[i + 1]))
+                {
+                    calculateViewList[i + 1] = calculateViewList[i] + calculateViewList[i + 1];
+                    calculateViewList.RemoveAt(i);
+                }
+                i++;
+            }
+
+            List<string> mathematicalCharListOnStack = new List<string>();
+            List<string> representationRPN = new List<string>();
+
+            for (int i = 0; i < calculateViewList.Count; i++)
+            {
+                if (IsNumeric(calculateViewList[i]))
+                {
+                    representationRPN.Add(calculateViewList[i]);
+                }
+                else
+                {
+                    if (mathematicalCharListOnStack.Count == 0)
+                    {
+                        mathematicalCharListOnStack.Add(calculateViewList[i]);
+                    }
+                    else
+                    {
+                        if (Priority(calculateViewList[i]) == 2)
+                        {
+                            if (Priority(mathematicalCharListOnStack[mathematicalCharListOnStack.Count - 1]) == 2)
+                            {
+                                representationRPN.Add(mathematicalCharListOnStack[mathematicalCharListOnStack.Count - 1]);
+                                mathematicalCharListOnStack.RemoveAt(mathematicalCharListOnStack.Count - 1);
+                                mathematicalCharListOnStack.Add(calculateViewList[i]);
+                            }
+
+                            if (Priority(mathematicalCharListOnStack[mathematicalCharListOnStack.Count - 1]) == 1)
+                            {
+                                int parentheses = mathematicalCharListOnStack.LastIndexOf("(");
+                                for (int k = 0; k < mathematicalCharListOnStack.Count - 1 - parentheses;)
+                                {
+                                    representationRPN.Add(mathematicalCharListOnStack[mathematicalCharListOnStack.Count - 1]);
+                                    mathematicalCharListOnStack.RemoveAt(mathematicalCharListOnStack.Count - 1);
+                                }
+                                mathematicalCharListOnStack.Add(calculateViewList[i]);
+                            }
+
+                            if (Priority(mathematicalCharListOnStack[mathematicalCharListOnStack.Count - 1]) == 3)
+                            {
+                                mathematicalCharListOnStack.Add(calculateViewList[i]);
+                            }
+                        }
+
+                        if (Priority(calculateViewList[i]) == 1)
+                        {
+                            if (Priority(mathematicalCharListOnStack[mathematicalCharListOnStack.Count - 1]) == 1)
+                            {
+                                representationRPN.Add(mathematicalCharListOnStack[mathematicalCharListOnStack.Count - 1]);
+                                mathematicalCharListOnStack.RemoveAt(mathematicalCharListOnStack.Count - 1);
+                                mathematicalCharListOnStack.Add(calculateViewList[i]);
+                            }
+                            if (Priority(mathematicalCharListOnStack[mathematicalCharListOnStack.Count - 1]) == 2 || Priority(mathematicalCharListOnStack[mathematicalCharListOnStack.Count - 1]) == 3)
+                            {
+                                mathematicalCharListOnStack.Add(calculateViewList[i]);
+                            }
+                        }
+
+                    }
+
+                    if (Priority(calculateViewList[i]) == 3)
+                    {
+                        if (Priority(mathematicalCharListOnStack[mathematicalCharListOnStack.Count - 1]) != 3)
+                        {
+                            mathematicalCharListOnStack.Add(calculateViewList[i]);
+                        }
+                    }
+
+                    if (Priority(calculateViewList[i]) == 4)
+                    {
+                        int parentheses = mathematicalCharListOnStack.LastIndexOf("(");
+                        for (int e = 0; e < mathematicalCharListOnStack.Count - 1 - parentheses;)
+                        {
+                            representationRPN.Add(mathematicalCharListOnStack[mathematicalCharListOnStack.Count - 1]);
+                            mathematicalCharListOnStack.RemoveAt(mathematicalCharListOnStack.Count - 1);
+                        }
+                        mathematicalCharListOnStack.RemoveAt(mathematicalCharListOnStack.Count - 1);
+                    }
+
+                }
+
+                if (i == calculateViewList.Count - 1)
+                {
+                    for (int j = 0; j < mathematicalCharListOnStack.Count;)
+                    {
+                        representationRPN.Add(mathematicalCharListOnStack[mathematicalCharListOnStack.Count - 1]);
+                        mathematicalCharListOnStack.RemoveAt(mathematicalCharListOnStack.Count - 1);
+                    }
                 }
             }
-            Console.WriteLine("\nОтвет: " + presentationStringRPN[0]);
-            Console.ReadLine();
+            return representationRPN;
+        }
+
+        public static string MathematicAction(string firstInput,string secondInput,string mathematicChar)
+        {
+            if (mathematicChar == "+")
+            {
+                return Sum(double.Parse(firstInput), double.Parse(secondInput)).ToString();
+            }
+            else if(mathematicChar == "-")
+            {
+                return Subtract(double.Parse(firstInput), double.Parse(secondInput)).ToString();
+            }
+            else if(mathematicChar == "*")
+            {
+                return Multiply(double.Parse(firstInput), double.Parse(secondInput)).ToString();
+            }
+            else 
+            {
+                return Divide(double.Parse(firstInput), double.Parse(secondInput)).ToString();
+            }
         }
 
         public static int Priority(string value)
@@ -176,8 +206,10 @@ namespace CalculatorRPN
                 return 2;
             else if (value == "(")
                 return 3;
-            else
+            else if (value == ")")
                 return 4;
+            else
+                return 1;
         }
 
         public static bool IsNumeric(string value)
@@ -219,6 +251,7 @@ namespace CalculatorRPN
             }
             else
             {
+                logger.Fatal("деление на 0");
                 throw new ArgumentNullException("cannot be divided by zero");
             }
         }

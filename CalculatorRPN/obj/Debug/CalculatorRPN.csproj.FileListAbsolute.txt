@@ -1,7 +1,11 @@
 C:\Users\user\source\CalculatorRPN\CalculatorRPN\CalculatorRPN\bin\Debug\CalculatorRPN.exe.config
 C:\Users\user\source\CalculatorRPN\CalculatorRPN\CalculatorRPN\bin\Debug\CalculatorRPN.exe
 C:\Users\user\source\CalculatorRPN\CalculatorRPN\CalculatorRPN\bin\Debug\CalculatorRPN.pdb
-C:\Users\user\source\CalculatorRPN\CalculatorRPN\CalculatorRPN\obj\Debug\CalculatorRPN.csproj.AssemblyReference.cache
 C:\Users\user\source\CalculatorRPN\CalculatorRPN\CalculatorRPN\obj\Debug\CalculatorRPN.csproj.CoreCompileInputs.cache
 C:\Users\user\source\CalculatorRPN\CalculatorRPN\CalculatorRPN\obj\Debug\CalculatorRPN.exe
 C:\Users\user\source\CalculatorRPN\CalculatorRPN\CalculatorRPN\obj\Debug\CalculatorRPN.pdb
+C:\Users\user\source\CalculatorRPN\CalculatorRPN\CalculatorRPN\bin\Debug\NLog.config
+C:\Users\user\source\CalculatorRPN\CalculatorRPN\CalculatorRPN\bin\Debug\NLog.dll
+C:\Users\user\source\CalculatorRPN\CalculatorRPN\CalculatorRPN\bin\Debug\NLog.xml
+C:\Users\user\source\CalculatorRPN\CalculatorRPN\CalculatorRPN\obj\Debug\CalculatorRPN.csproj.CopyComplete
+C:\Users\user\source\CalculatorRPN\CalculatorRPN\CalculatorRPN\obj\Debug\CalculatorRPN.csproj.AssemblyReference.cache

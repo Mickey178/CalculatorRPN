@@ -1,122 +1,68 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 
 namespace CalculatorRPN.Tests
 {
-    [TestClass()]
+    [TestClass]
     public class ProgramTests
     {
-        [TestMethod()]
-        public void PriorityTest_signMultiplyOrDivide_1returned()
+        [DataRow("1+1","2")]
+        [DataRow("5*(1+3)", "20")]
+        [DataRow("5*(5+(1+3)/2)", "35")]
+        [DataRow("27-(5+(12/3)*3)", "10")]
+        [DataTestMethod]
+        public void CalculateTests(string input,string assertResult)
         {
-            string value1 = "*";
-            string value2 = "/";
-            int excepted = 1;
-            int actual = Program.Priority(value1);
-            Assert.AreEqual(excepted, actual, "if we have a {0} at the input, then we should get {1}", value1, excepted);
-            int excepted2 = 1;
-            int actual2 = Program.Priority(value2);
-            Assert.AreEqual(excepted2, actual2, "if we have a {0} at the input, then we should get {1}", value2, excepted2);
+            var actualResult = Program.Calculate(input);
+            Assert.AreEqual(assertResult,actualResult);
+        }
+        
+        [DataRow("1","1","+", "2")]
+        [DataRow("15","3","-", "12")]
+        [DataRow("7","0,5","*", "3,5")]
+        [DataRow("12","0,5","/", "24")]
+        [DataTestMethod]
+        public void MathematicActionTests(string inputFirst, string inputSecond,string inputChar, string assertResult)
+        {
+            var actualResult = Program.MathematicAction(inputFirst,inputSecond,inputChar);
+            Assert.AreEqual(assertResult, actualResult);
         }
 
-        public void PriorityTest_signSumOrSubtract_2returned()
+        [DataRow("1+1", "2")]
+        [DataRow("5*(1+3)", "20")]
+        [DataRow("5*(5+(1+3)/2)", "35")]
+        [DataRow("27-(5+(12/3)*3)", "10")]
+        [DataTestMethod]
+        public void MathematicOperationTests(string input, string assertResult)
         {
-            string value1 = "+";
-            string value2 = "-";
-            int excepted = 2;
-            int actual = Program.Priority(value1);
-            Assert.AreEqual(excepted, actual, "if we have a {0} at the input, then we should get {1}", value1, excepted);
-            int excepted2 = 2;
-            int actual2 = Program.Priority(value2);
-            Assert.AreEqual(excepted2, actual2, "if we have a {0} at the input, then we should get {1}", value2, excepted2);
+            var actualResult = Program.MathematicalOperation(Program.Converting(input));
+            Assert.AreEqual(assertResult, actualResult);
         }
 
-        public void PriorityTest_openParenthesis_3returned()
+        [DataRow("27-(5+(12/3)*3)")]
+        [TestMethod]
+        public void ConvertingTests(string input)
         {
-            string value = "(";
-            int excepted = 3;
-            int actual = Program.Priority(value);
-            Assert.AreEqual(excepted, actual, "if we have a {0} at the input, then we should get {1}", value, excepted);
-        }
-
-        public void PriorityTest_closeParenthesis_4returned()
-        {
-            string value = ")";
-            int excepted = 4;
-            int actual = Program.Priority(value);
-            Assert.AreEqual(excepted, actual, "if we have a {0} at the input, then we should get {1}", value, excepted);
-        }
-
-        [TestMethod()]
-        public void IsNumericTest_comma_trueReturned()
-        {
-            string value = ",";
-            bool excepted = true;
-            bool actual = Program.IsNumeric(value);
-            Assert.AreEqual(excepted, actual, "if we have a {0} at the input, then we should get {1}", value, excepted);
-        }
-
-        [TestMethod()]
-        public void IsNumericTest_5_trueReturned()
-        {
-            string value = "5";
-            bool excepted = true;
-            bool actual = Program.IsNumeric(value);
-            Assert.AreEqual(excepted, actual, "if we have a {0} at the input, then we should get {1}", value, excepted);
-        }
-
-        [TestMethod()]
-        public void IsNumericTest_mathematicalSign_falseReturned()
-        {
-            string value = "*";
-            bool excepted = false;
-            bool actual = Program.IsNumeric(value);
-            Assert.AreEqual(excepted, actual, "if we have a {0} at the input, then we should get {1}", value, excepted);
-        }
-
-        [TestMethod()]
-        public void SumTest_05and10_105returned()
-        {
-            double x = 0.5;
-            double y = 10;
-            double excepted = 10.5;
-            double actual = Program.Sum(x,y);
-            Assert.AreEqual(excepted,actual, "Sum of number {0}, {1} should have been {2}" ,x ,y, excepted);
-        }
-
-        [TestMethod()]
-        public void SubtractTest_20and10_10returned()
-        {
-            double x = 20;
-            double y = 10;
-            double excepted = 10;
-            double actual = Program.Subtract(x, y);
-            Assert.AreEqual(excepted, actual, "Subtract of number {0}, {1} should have been {2}", x, y, excepted);
-        }
-
-        [TestMethod()]
-        public void MultiplyTest_5and5_25returned()
-        {
-            double x = 5;
-            double y = 5;
-            double excepted = 25;
-            double actual = Program.Multiply(x, y);
-            Assert.AreEqual(excepted, actual, "Mupliply of number {0}, {1} should have been {2}", x, y, excepted);
-        }
-
-        [TestMethod()]
-        public void DivideTest_10and5_2returned()
-        {
-            double x = 10;
-            double y = 5;
-            double excepted = 2;
-            double actual = Program.Divide(x, y);
-            Assert.AreEqual(excepted, actual, "Divide of number {0}, {1} should have been {2}", x, y, excepted);
+            List<string> assertResult = new List<string>
+            {
+                "27",
+                "5",
+                "12",
+                "3",
+                "/",
+                "3",
+                "*",
+                "+",
+                "-"
+            };
+            var actualResult = Program.Converting(input);
+            CollectionAssert.AreEqual(assertResult, actualResult);
         }
 
         [ExpectedException(typeof(ArgumentNullException), "exception was not throw")]
-        [TestMethod()]
-        public void DivideTest_10and0_ExceptionReturned()
+        [TestMethod]
+        public void DivideByZeroExceptionReturned()
         {
             double x = 10;
             double y = 0;
