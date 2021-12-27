@@ -18,3 +18,6 @@ C:\Users\user\source\CalculatorRPN\CalculatorRPN\CalculatorRPNTests\obj\Debug\Ca
 C:\Users\user\source\CalculatorRPN\CalculatorRPN\CalculatorRPNTests\obj\Debug\CalculatorRPNTests.csproj.CopyComplete
 C:\Users\user\source\CalculatorRPN\CalculatorRPN\CalculatorRPNTests\obj\Debug\CalculatorRPNTests.dll
 C:\Users\user\source\CalculatorRPN\CalculatorRPN\CalculatorRPNTests\obj\Debug\CalculatorRPNTests.pdb
+C:\Users\user\source\CalculatorRPN\CalculatorRPN\CalculatorRPNTests\bin\Debug\NLog.config
+C:\Users\user\source\CalculatorRPN\CalculatorRPN\CalculatorRPNTests\bin\Debug\NLog.dll
+C:\Users\user\source\CalculatorRPN\CalculatorRPN\CalculatorRPNTests\bin\Debug\NLog.xml
